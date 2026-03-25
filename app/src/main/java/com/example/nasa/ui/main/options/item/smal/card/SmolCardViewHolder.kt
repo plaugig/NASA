@@ -1,0 +1,34 @@
+package com.example.nasa.ui.main.options.item.smal.card
+
+import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.nasa.databinding.ItemMainHorizontalSectionBinding
+import com.example.nasa.ui.main.SpaceClickListener
+import com.example.nasa.ui.main.options.item.SpaceItem
+import com.example.nasa.ui.main.options.item.SpaceItemViewHolder
+
+class SmolCardViewHolder(
+    itemView: View,
+    listener: SpaceClickListener
+) : SpaceItemViewHolder(itemView) {
+
+    private val binding = ItemMainHorizontalSectionBinding.bind(itemView)
+
+    private val horizontalAdapter = HorizontalPhotosAdapter(listener)
+
+    override fun bind(item: SpaceItem) {
+        item as SmolSectionItem
+        binding.sectionTitle.text = item.title
+        binding.horizontalRecycler.apply {
+            layoutManager = LinearLayoutManager(
+                context,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            adapter = horizontalAdapter
+
+        }
+
+        horizontalAdapter.submitList(item.photos)
+    }
+}

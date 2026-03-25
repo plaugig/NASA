@@ -1,7 +1,6 @@
 package com.example.nasa.domain
 
 import androidx.paging.PagingData
-import androidx.room.Query
 import com.example.nasa.data.SpacePhotoData
 import com.example.nasa.domain.use.cases.GetLikePhotoUserCase
 import com.example.nasa.domain.use.cases.GetSpacePhotoUseCase
@@ -10,7 +9,7 @@ import com.example.nasa.domain.use.cases.ToggleFavoriteUseCase
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
-class Interactor @Inject constructor(
+class NasaInteractor @Inject constructor(
     private val getLikePhotoUserCase: GetLikePhotoUserCase,
     private val getSpacePhotoUseCase: GetSpacePhotoUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,

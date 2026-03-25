@@ -1,6 +1,6 @@
 package com.example.nasa.ui
 
-data class SpacePhotoData (
+data class UISpaceData (
     val title: String,
     val description: String?,
     val photographer: String?,
