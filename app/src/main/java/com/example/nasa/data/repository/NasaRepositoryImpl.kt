@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import com.example.nasa.data.SpacePhotoData
 import com.example.nasa.data.database.LocalDataSource
 import com.example.nasa.data.maper.toDomain
+import com.example.nasa.data.maper.toDomains
 import com.example.nasa.data.maper.toEntity
 import com.example.nasa.data.remote.NasaPagingSource
 import com.example.nasa.data.remote.NasaRemoteDataSource
@@ -30,6 +31,17 @@ class NasaRepositoryImpl @Inject constructor(
             }
         ).flow
 
+    }
+
+    override suspend fun getSimplePhotos(query: String): List<SpacePhotoData>{
+        return try {
+            val response = remote.getSpacePhotos(query, page = 1)
+            response.collection.items.map {
+                it.toDomains()
+            }
+        } catch (e: Exception){
+            emptyList()
+        }
     }
 
     override fun getLikePhotos(): Flow<List<SpacePhotoData>> {

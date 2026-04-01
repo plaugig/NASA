@@ -3,7 +3,7 @@ package com.example.nasa.data.remote
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.nasa.data.SpacePhotoData
-import com.example.nasa.data.maper.toDomain
+import com.example.nasa.data.maper.toDomains
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -19,7 +19,7 @@ class NasaPagingSource(
                 val response = remote.getSpacePhotos(query, curentPage)
 
                 val photo = response.collection.items.map {
-                    it.toDomain()
+                    it.toDomains()
                 }
 
                 LoadResult.Page(

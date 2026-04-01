@@ -9,6 +9,7 @@ data class BigHeaderItem (
     val query: String? = null,
     val isFavorites: Boolean = false
 ) : SpaceItem() {
+
     override fun isItemTheSame(item: SpaceItem): Boolean {
        return item is BigHeaderItem && this.id == item.id
     }

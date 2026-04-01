@@ -5,7 +5,7 @@ import com.example.nasa.domain.NasaRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
-class GetLikePhotoUserCase @Inject constructor(
+class GetLikePhotoUseCase @Inject constructor(
     private val repository: NasaRepository
 ) {
     fun getLikePhotos(): Flow<List<SpacePhotoData>> {

@@ -13,6 +13,8 @@ interface NasaRepository {
 
     fun isFavorite(id: String): Flow<Boolean>
 
+   suspend fun getSimplePhotos (query: String): List<SpacePhotoData>
+
 
 
 }

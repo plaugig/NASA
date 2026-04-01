@@ -26,7 +26,6 @@ class HorizontalPhotosViewHolder(
         itemView.setOnClickListener {
             listener.onSearchQueryChange(photo.title)
         }
-
-
     }
+
 }
