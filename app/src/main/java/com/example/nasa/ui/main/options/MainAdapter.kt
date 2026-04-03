@@ -12,7 +12,7 @@ import com.example.nasa.ui.main.options.item.SpaceItemViewHolder
 import com.example.nasa.ui.main.options.item.big.card.BigCardViewHolder
 import com.example.nasa.ui.main.options.item.big.card.BigHeaderItem
 import com.example.nasa.ui.main.options.item.smal.card.SmolCardViewHolder
-import com.example.nasa.ui.main.options.item.smal.card.SmolSectionItem
+import com.example.nasa.ui.main.options.item.smal.card.SmallSectionItem
 
 class MainAdapter(
     private val listener: SpaceClickListener
@@ -21,7 +21,7 @@ class MainAdapter(
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
             is BigHeaderItem -> SpaceItemType.BIG
-            is SmolSectionItem -> SpaceItemType.SMOL
+            is SmallSectionItem -> SpaceItemType.SMOL
             else -> error("хз in type")
         }
     }

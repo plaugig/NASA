@@ -28,7 +28,7 @@ class SmolCardViewHolder(
     }
 
     override fun bind(item: SpaceItem) {
-        item as SmolSectionItem
+        item as SmallSectionItem
 
         binding.sectionTitle.text = item.title
 

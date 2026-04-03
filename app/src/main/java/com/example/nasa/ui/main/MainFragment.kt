@@ -20,32 +20,29 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainFragment : Fragment(), SpaceClickListener {
 
     private var _binding: MainFragmentBinding? = null
-
     private val binding get() = _binding!!
 
     private val viewModel: MainViewModel by viewModels()
 
     private val mainAdapter by lazy { MainAdapter(this) }
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = MainFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         binding.mainRecycler.apply {
             adapter = mainAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
 
         observeViewModel()
-
-        viewModel.loadMainScreen()
     }
 
     private fun observeViewModel() {
@@ -55,21 +52,21 @@ class MainFragment : Fragment(), SpaceClickListener {
     }
 
     override fun onSearchClick(query: String) {
-        val bundle = bundleOf(
-            "QUERY" to query,
-            "IS_FAV" to false
-        )
         findNavController().navigate(
-            R.id.action_mainFragment_to_detailsFragment,
-            bundle
+            resId = R.id.action_mainFragment_to_detailsFragment,
+            args = bundleOf(
+                "QUERY" to query,
+                "IS_FAV" to false
+            )
         )
     }
 
     override fun onFavoriteClick() {
-        val bundle = bundleOf("IS_FAV" to true)
         findNavController().navigate(
-            R.id.action_mainFragment_to_detailsFragment,
-            bundle
+            resId = R.id.action_mainFragment_to_detailsFragment,
+            args = bundleOf(
+                "IS_FAV" to true
+            )
         )
     }
 
