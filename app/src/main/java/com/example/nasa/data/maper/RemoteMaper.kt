@@ -12,5 +12,6 @@ fun NasaItemDto.toDomains(): SpacePhotoData {
         imageUrl = this.links?.firstOrNull()?.href ?: "",
         photographer = data?.photographer ?: "",
         location = data?.location ?: "",
+        data = data?.data ?: ""
     )
 }

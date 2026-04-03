@@ -1,6 +1,7 @@
 package com.example.nasa.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,15 +37,15 @@ class MainFragment : Fragment(), SpaceClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupRecyclerView()
-        observeViewModel()
-    }
 
-    private fun setupRecyclerView() {
         binding.mainRecycler.apply {
             adapter = mainAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
+
+        observeViewModel()
+
+        viewModel.loadMainScreen()
     }
 
     private fun observeViewModel() {
@@ -53,8 +54,11 @@ class MainFragment : Fragment(), SpaceClickListener {
         }
     }
 
-    override fun onSearchQueryChange(query: String) {
-        val bundle = bundleOf("search_query" to query)
+    override fun onSearchClick(query: String) {
+        val bundle = bundleOf(
+            "QUERY" to query,
+            "IS_FAV" to false
+        )
         findNavController().navigate(
             R.id.action_mainFragment_to_detailsFragment,
             bundle
@@ -62,7 +66,11 @@ class MainFragment : Fragment(), SpaceClickListener {
     }
 
     override fun onFavoriteClick() {
-        findNavController().navigate(R.id.action_mainFragment_to_detailsFragment)
+        val bundle = bundleOf("IS_FAV" to true)
+        findNavController().navigate(
+            R.id.action_mainFragment_to_detailsFragment,
+            bundle
+        )
     }
 
     override fun onDestroyView() {

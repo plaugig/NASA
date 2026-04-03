@@ -10,7 +10,8 @@ return SpacePhotoData (
     description = this.description,
     imageUrl = this.url,
     photographer = this.photographer,
-    location = this.location
+    location = this.location,
+    data = this.data
 )
 }
 
@@ -22,5 +23,6 @@ fun SpacePhotoData.toEntity(): LikePhotoEntity {
         url = this.imageUrl,
         photographer = this.photographer,
         location = this.location,
+        data = this.data
     )
 }

@@ -2,7 +2,7 @@ package com.example.nasa.ui.main
 
 interface SpaceClickListener {
 
-    fun onSearchQueryChange(query: String)
+    fun onSearchClick(query: String)
 
     fun onFavoriteClick()
 

@@ -9,6 +9,6 @@ interface NasaApi {
         @Query("q") query: String,
         @Query("page") page: Int,
         @Query("media_type") mediaType: String = "image",
-        @Query("api_key") apiKey: String = "A47NJ2WUaQteTmH1BZmbFWYA9m3mXAWaOBhdekoc"
+       // @Query("api_key") apiKey: String = "A47NJ2WUaQteTmH1BZmbFWYA9m3mXAWaOBhdekoc"
     ): NasaResponseDto
 }

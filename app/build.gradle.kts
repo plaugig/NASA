@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.navigation.safeargs)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.parcelize)
+
 }
 
 android {

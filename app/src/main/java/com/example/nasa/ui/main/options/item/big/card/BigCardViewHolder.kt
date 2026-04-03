@@ -1,6 +1,8 @@
 package com.example.nasa.ui.main.options.item.big.card
 
 import android.view.View
+import com.bumptech.glide.Glide
+import com.example.nasa.R
 import com.example.nasa.databinding.ItemMainBigCardBinding
 import com.example.nasa.ui.main.SpaceClickListener
 import com.example.nasa.ui.main.options.item.SpaceItem
@@ -15,14 +17,34 @@ class BigCardViewHolder(
     private val binding = ItemMainBigCardBinding.bind(itemView)
 
     override fun bind(item: SpaceItem) {
-        item as BigHeaderItem
+        val headerItem = item as BigHeaderItem
         binding.title.text = item.title
 
-        itemView.setOnClickListener {
-            if (item.isFavorites) {
+        binding.title.text = if (headerItem.isFavorites) {
+            itemView.context.getString(R.string.favorites)
+        } else {
+            headerItem.title
+        }
+
+        if (headerItem.isFavorites) {
+            binding.favIcon.visibility = View.VISIBLE
+            binding.image.setImageResource(R.drawable.favorites_card)
+
+            binding.root.setOnClickListener {
                 listener.onFavoriteClick()
-            } else {
-                listener.onSearchQueryChange(item.query ?: "")
+            }
+        } else {
+            binding.favIcon.visibility = View.GONE
+
+            Glide.with(binding.image)
+                .load(headerItem.imageUrl)
+                .placeholder(R.drawable.bg_glass)
+                .centerCrop()
+                .into(binding.image)
+
+            binding.root.setOnClickListener {
+                val searchQuery = headerItem.query ?: headerItem.title
+                listener.onSearchClick(searchQuery)
             }
         }
     }

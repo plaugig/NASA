@@ -6,5 +6,6 @@ data class SpacePhotoData(
     val photographer: String?,
     val location: String?,
     val nasaId: String,
-    val imageUrl: String
+    val imageUrl: String,
+    val data: String
 )

@@ -18,7 +18,7 @@ data class NasaCollectionDto(
 @Serializable
 data class NasaItemDto(
     val data: List<NasaDataDto>,
-    val links: List<NasaLinksDto>,
+    val links: List<NasaLinksDto>? = null,
 )
 
 @Serializable
@@ -27,6 +27,7 @@ data class NasaDataDto(
     val description: String? = null,
     val photographer: String? = null,
     val location: String? = null,
+    val data: String? = null,
     @SerialName("nasa_id")
     val nasaId: String,
     @SerialName("media_type")

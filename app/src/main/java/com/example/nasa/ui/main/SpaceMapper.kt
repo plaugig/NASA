@@ -12,7 +12,8 @@ object SpaceMapper {
             imageUrl = domain.imageUrl,
             photographer = domain.photographer,
             location = domain.location,
-            isFavorite = false
+            isFavorite = false,
+            date = domain.data
         )
     }
 }

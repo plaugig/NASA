@@ -16,9 +16,7 @@ class SmolCardViewHolder(
 
     private val horizontalAdapter = HorizontalPhotosAdapter(listener)
 
-    override fun bind(item: SpaceItem) {
-        item as SmolSectionItem
-        binding.sectionTitle.text = item.title
+    init {
         binding.horizontalRecycler.apply {
             layoutManager = LinearLayoutManager(
                 context,
@@ -26,8 +24,13 @@ class SmolCardViewHolder(
                 false
             )
             adapter = horizontalAdapter
-
         }
+    }
+
+    override fun bind(item: SpaceItem) {
+        item as SmolSectionItem
+
+        binding.sectionTitle.text = item.title
 
         horizontalAdapter.submitList(item.photos)
     }

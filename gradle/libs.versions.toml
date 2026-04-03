@@ -27,6 +27,7 @@ retrofitSerializationConverter = "1.0.0"
 paging = "3.3.5"
 
 
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -64,4 +65,5 @@ kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
 navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 

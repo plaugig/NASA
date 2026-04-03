@@ -6,10 +6,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import jakarta.inject.Singleton
+
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -27,7 +28,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(json: Json): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://api.nasa.gov/")
+            .baseUrl("https://images-api.nasa.gov/")
             .addConverterFactory(
                 json.asConverterFactory("application/json".toMediaType())
             )

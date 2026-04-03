@@ -9,11 +9,14 @@ import com.example.nasa.ui.main.options.item.SpaceItem
 import com.example.nasa.ui.main.options.item.big.card.BigHeaderItem
 import com.example.nasa.ui.main.options.item.smal.card.SmolSectionItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -29,76 +32,105 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             val resultList = mutableListOf<SpaceItem>()
 
-            val apodList = interactor.getSimplePhoto("APOD")
-            apodList.firstOrNull()?.let { photoData ->
-                val header = BigHeaderItem(
-                    id = photoData.nasaId.hashCode(),
-                    title = "Picture of the Day",
-                    imageUrl = photoData.imageUrl,
-                    query = "APOD"
-                )
-                resultList.add(header)
+            val favoriteCard = BigHeaderItem(
+                id = -1,
+                title = "Favorites",
+                imageUrl = null,
+                isFavorites = true,
+                nasaId = "",
+                description = ""
+            )
+            resultList.add(favoriteCard)
+            _screenItems.value = resultList.toList()
 
-                resultList.add(
-                    BigHeaderItem(
-                        id = -1,
-                        title = "Favorites",
-                        imageUrl = null,
-                        isFavorites = true
-                    )
-                )
-
-                val sectionsConfig = mapOf(
-                    "Mars Rovers" to listOf(
-                        "Mars Curiosity",
-                        "Mars Perseverance",
-                        "Mars Spirit",
-                        "Mars Opportunity",
-                        "Mars InSight"
-                    ),
-
-                    "Moon Missions" to listOf(
-                        "Apollo 11",
-                        "Artemis",
-                        "Lunar Surface",
-                        "Moon Crater",
-                        "Apollo 17"
-                    ),
-
-                    "The Sun" to listOf(
-                        "Solar Orbiter",
-                        "SOHO NASA",
-                        "Solar Flare",
-                        "Parker Solar Probe",
-                        "Sun Eclipse"
-                    ),
-
-                    "Distant Galaxies" to listOf(
-                        "Andromeda Galaxy",
-                        "Milky Way",
-                        "Hubble Deep Field",
-                        "Sombrero Galaxy",
-                        "Messier 87"
-                    )
-                )
-                val deferredSections = sectionsConfig.map { (title, queries) ->
-                    async { createSection(title, queries) }
+            launch(Dispatchers.IO) {
+                try {
+                    val artemisPhotos = interactor.getSimplePhoto("Artemis II mission")
+                    artemisPhotos.firstOrNull()?.let { firstPhoto ->
+                        val header = BigHeaderItem(
+                            id = firstPhoto.nasaId.hashCode(),
+                            title = "Artemis II: Journey to the Moon",
+                            imageUrl = firstPhoto.imageUrl,
+                            query = "Artemis II",
+                            nasaId = firstPhoto.nasaId,
+                            description = firstPhoto.description ?: ""
+                        )
+                        withContext(Dispatchers.Main) {
+                            resultList.add(0, header)
+                            _screenItems.value = resultList.toList()
+                        }
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("NASA_DEBUG", "Header error: ${e.message}")
                 }
+            }
 
-                resultList.addAll(deferredSections.awaitAll().filterNotNull())
+            val sectionsConfig = mapOf(
+                "Mars Exploration" to listOf(
+                    "Mars Surface",
+                    "Mars Rover",
+                    "Gale Crater",
+                    "Jezero Crater",
+                    "Mars Rocks"
+                ),
 
-                _screenItems.value = resultList
+                "Deep Space" to listOf(
+                    "James Webb: Discovery",
+                    "Galaxy Cluster",
+                    "Supernova",
+                    "Black Hole",
+                    "Hubble Heritage"
+                ),
 
+                "Solar System" to listOf(
+                    "Saturn Rings",
+                    "Jupiter Clouds",
+                    "Pluto Surface",
+                    "Solar Flare",
+                    "Earth from Space"
+                ),
+
+
+                "Distant Galaxies" to listOf(
+                    "Andromeda Galaxy",
+                    "Milky Way",
+                    "Hubble Deep Field",
+                    "Sombrero Galaxy",
+                    "Messier 87"
+                )
+
+            )
+
+            sectionsConfig.forEach { (title, queries) ->
+                launch(Dispatchers.IO) {
+                    try {
+                        val section = createSection(title, queries)
+                        if (section != null) {
+                            withContext(Dispatchers.Main) {
+                                resultList.add(section)
+                                _screenItems.value = resultList.toList()
+                            }
+                        }
+                    } catch (e: Exception){
+
+                    }
+                }
             }
         }
     }
 
     private suspend fun createSection(title: String, queries: List<String>): SmolSectionItem? {
-        val photos = queries.mapNotNull { query ->
-            val list = interactor.getSimplePhoto(query)
-
-            list.firstOrNull()?.let { SpaceMapper.mapToUi(it) }
+        return coroutineScope {
+            val deferredPhotos = queries.map { query ->
+                async {
+                    val list = interactor.getSimplePhoto(query)
+                    list.firstOrNull()?.let {
+                        SpaceMapper.mapToUi(it)
+                    }
+                }
+            }
+            val photos = deferredPhotos.awaitAll().filterNotNull()
+            if (photos.isNotEmpty()) SmolSectionItem(title, photos) else null
         }
-        return if (photos.isNotEmpty()) SmolSectionItem(title, photos) else null
     }
 }

@@ -1,6 +1,7 @@
 package com.example.nasa.ui.main.options.item.smal.card.item
 
 import android.view.View
+import androidx.appcompat.resources.R
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.nasa.databinding.ItemHorizontalSmallCardBinding
@@ -24,7 +25,7 @@ class HorizontalPhotosViewHolder(
             .into(binding.image)
 
         itemView.setOnClickListener {
-            listener.onSearchQueryChange(photo.title)
+            listener.onSearchClick(photo.title)
         }
     }
 
