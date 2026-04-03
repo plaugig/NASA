@@ -7,7 +7,7 @@ import com.example.nasa.ui.main.SpaceClickListener
 import com.example.nasa.ui.main.options.item.SpaceItem
 import com.example.nasa.ui.main.options.item.SpaceItemViewHolder
 
-class SmolCardViewHolder(
+class SmallCardViewHolder(
     itemView: View,
     listener: SpaceClickListener
 ) : SpaceItemViewHolder(itemView) {

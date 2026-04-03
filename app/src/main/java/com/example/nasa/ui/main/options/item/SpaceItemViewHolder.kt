@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 abstract class SpaceItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     abstract fun bind(item: SpaceItem)
+    open fun bind(item: SpaceItem, payload: Any?) {}
 }
 
 

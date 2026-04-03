@@ -4,27 +4,28 @@ package com.example.nasa.ui.main.options
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.example.nasa.R
 import com.example.nasa.ui.main.SpaceClickListener
 import com.example.nasa.ui.main.options.item.SpaceItem
 import com.example.nasa.ui.main.options.item.SpaceItemViewHolder
 import com.example.nasa.ui.main.options.item.big.card.BigCardViewHolder
 import com.example.nasa.ui.main.options.item.big.card.BigHeaderItem
-import com.example.nasa.ui.main.options.item.smal.card.SmolCardViewHolder
+import com.example.nasa.ui.main.options.item.smal.card.SmallCardViewHolder
 import com.example.nasa.ui.main.options.item.smal.card.SmallSectionItem
 
 class MainAdapter(
     private val listener: SpaceClickListener
-) : ListAdapter<SpaceItem, SpaceItemViewHolder>(SpaceDiffCallback) {
+) : RecyclerView.Adapter<SpaceItemViewHolder>() {
 
-    override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
-            is BigHeaderItem -> SpaceItemType.BIG
-            is SmallSectionItem -> SpaceItemType.SMOL
-            else -> error("хз in type")
+    var items = emptyList<SpaceItem>()
+        set(value) {
+            val callback = SpaceDiffCallback(field, value)
+            val result = DiffUtil.calculateDiff(callback)
+            field = value
+            result.dispatchUpdatesTo(this)
         }
-    }
+
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -41,7 +42,7 @@ class MainAdapter(
                 listener
             )
 
-            SpaceItemType.SMOL -> SmolCardViewHolder(
+            SpaceItemType.SMALL -> SmallCardViewHolder(
                 inflater.inflate(
                     R.layout.item_main_horizontal_section,
                     parent,
@@ -55,28 +56,36 @@ class MainAdapter(
         }
     }
 
+
     override fun onBindViewHolder(
         holder: SpaceItemViewHolder,
         position: Int
     ) {
-        holder.bind(getItem(position))
+        holder.bind(items[position])
     }
 
-    object SpaceDiffCallback : DiffUtil.ItemCallback<SpaceItem>() {
-        override fun areItemsTheSame(
-            oldItem: SpaceItem,
-            newItem: SpaceItem
-        ): Boolean {
-            return oldItem.isItemTheSame(newItem)
+    override fun onBindViewHolder(
+        holder: SpaceItemViewHolder,
+        position: Int,
+        payloads: List<Any?>
+    ) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position)
+        } else {
+            payloads.forEach { payload ->
+                holder.bind(items[position], payload)
+            }
         }
-
-        override fun areContentsTheSame(
-            oldItem: SpaceItem,
-            newItem: SpaceItem
-        ): Boolean {
-            return oldItem.isContentTheSame(newItem)
-        }
-
     }
 
+
+    override fun getItemViewType(position: Int): Int {
+        return when (items[position]) {
+            is BigHeaderItem -> SpaceItemType.BIG
+            is SmallSectionItem -> SpaceItemType.SMALL
+            else -> error("хз in type")
+        }
+    }
+
+    override fun getItemCount(): Int = items.size
 }

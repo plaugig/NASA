@@ -14,6 +14,10 @@ data class SmallSectionItem(
     override fun isContentTheSame(item: SpaceItem): Boolean {
         return item is SmallSectionItem && photos == item.photos
     }
+
+    override fun getPayload(item: SpaceItem): Any {
+        return Any()
+    }
 }
 
 

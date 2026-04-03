@@ -48,4 +48,43 @@ class BigCardViewHolder(
             }
         }
     }
+
+    override fun bind(item: SpaceItem, payload: Any?) {
+        item as BigHeaderItem
+        payload as BigHeaderItemPayload
+
+        if (payload.isTitleChanged) {
+            binding.title.text = if (item.isFavorites) {
+                itemView.context.getString(R.string.favorites)
+            } else {
+                item.title
+            }
+        }
+        if (payload.isFavoritesChanged) {
+            binding.favIcon.visibility = if (item.isFavorites) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+
+            if (item.isFavorites) {
+                binding.image.setImageResource(R.drawable.favorites_card)
+
+                binding.root.setOnClickListener {
+                    listener.onFavoriteClick()
+                }
+            } else {
+                Glide.with(binding.image)
+                    .load(item.imageUrl)
+                    .placeholder(R.drawable.bg_glass)
+                    .centerCrop()
+                    .into(binding.image)
+
+                binding.root.setOnClickListener {
+                    val searchQuery = item.query ?: item.title
+                    listener.onSearchClick(searchQuery)
+                }
+            }
+        }
+    }
 }

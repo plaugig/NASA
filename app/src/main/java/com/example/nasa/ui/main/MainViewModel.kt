@@ -1,7 +1,5 @@
 package com.example.nasa.ui.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nasa.domain.NasaInteractor
@@ -15,6 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -25,8 +25,8 @@ class MainViewModel @Inject constructor(
     private val interactor: NasaInteractor
 ) : ViewModel() {
 
-    private val _screenItems = MutableLiveData<List<SpaceItem>>()
-    val screenItem: LiveData<List<SpaceItem>> = _screenItems
+    private val _screenItems = MutableStateFlow<List<SpaceItem>>(emptyList())
+    val screenItem: Flow<List<SpaceItem>> get() = _screenItems
 
     init {
         loadMainScreen()
@@ -36,39 +36,29 @@ class MainViewModel @Inject constructor(
         val resultList = mutableListOf<SpaceItem>()
 
         val favoriteCard = BigHeaderItem(
-            id = -1,
+            id = "FAVORITE",
             title = "Favorites",
             imageUrl = null,
             isFavorites = true,
-            nasaId = "",
             description = ""
         )
 
         resultList.add(favoriteCard)
-        _screenItems.value = resultList.toList()
+        _screenItems.emit(resultList.toList())
 
-        launch(Dispatchers.IO) {
-            try {
-                val artemisPhotos = interactor.getSimplePhoto("Artemis II mission")
+        val artemisPhotos = interactor.getSimplePhoto("Artemis II mission")
 
-                artemisPhotos.firstOrNull()?.let { firstPhoto ->
-                    val header = BigHeaderItem(
-                        id = firstPhoto.nasaId.hashCode(),
-                        title = "Artemis II: Journey to the Moon",
-                        imageUrl = firstPhoto.imageUrl,
-                        query = "Artemis II",
-                        nasaId = firstPhoto.nasaId,
-                        description = firstPhoto.description ?: ""
-                    )
+        artemisPhotos.firstOrNull()?.let { firstPhoto ->
+            val header = BigHeaderItem(
+                id = firstPhoto.nasaId,
+                title = "Artemis II: Journey to the Moon",
+                imageUrl = firstPhoto.imageUrl,
+                query = "Artemis II",
+                description = firstPhoto.description ?: ""
+            )
 
-                    withContext(Dispatchers.Main) {
-                        resultList.add(0, header)
-                        _screenItems.value = resultList.toList()
-                    }
-                }
-            } catch (e: Exception) {
-                android.util.Log.e("NASA_DEBUG", "Header error: ${e.message}")
-            }
+            resultList.add(0, header)
+            _screenItems.emit(resultList.toList())
         }
 
         val sectionsConfig = mapOf(
@@ -108,17 +98,11 @@ class MainViewModel @Inject constructor(
         )
 
         sectionsConfig.forEach { (title, queries) ->
-            launch(Dispatchers.IO) {
-                try {
-                    val section = createSection(title, queries)
-                    if (section != null) {
-                        withContext(Dispatchers.Main) {
-                            resultList.add(section)
-                            _screenItems.value = resultList.toList()
-                        }
-                    }
-                } catch (e: Exception) {
-
+            val section = createSection(title, queries)
+            if (section != null) {
+                withContext(Dispatchers.Main) {
+                    resultList.add(section)
+                    _screenItems.emit(resultList.toList())
                 }
             }
         }

@@ -8,12 +8,18 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavOptions
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nasa.R
 import com.example.nasa.databinding.MainFragmentBinding
 import com.example.nasa.ui.main.options.MainAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -26,6 +32,10 @@ class MainFragment : Fragment(), SpaceClickListener {
 
     private val mainAdapter by lazy { MainAdapter(this) }
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,8 +56,12 @@ class MainFragment : Fragment(), SpaceClickListener {
     }
 
     private fun observeViewModel() {
-        viewModel.screenItem.observe(viewLifecycleOwner) { items ->
-            mainAdapter.submitList(items)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.screenItem.collect { items ->
+                    mainAdapter.items = items
+                }
+            }
         }
     }
 

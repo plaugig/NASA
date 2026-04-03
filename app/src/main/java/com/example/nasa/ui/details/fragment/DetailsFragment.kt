@@ -11,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nasa.databinding.DetailsFragmentBinding
 import com.example.nasa.ui.UISpaceData
-import com.example.nasa.ui.details.ScreenType
 import com.example.nasa.ui.details.bottom.sheet.DetailsBottomSheet
 import com.example.nasa.ui.details.fragment.item.DetailsClickListener
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,7 +33,7 @@ class DetailsFragment : Fragment(), DetailsClickListener {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = DetailsFragmentBinding.inflate(
             inflater,
             container,
@@ -57,27 +56,21 @@ class DetailsFragment : Fragment(), DetailsClickListener {
     }
 
     private fun setupDataObservation() {
-        val query = arguments?.getString("QUERY") ?: ""
-        val isFav = arguments?.getBoolean("IS_FAV") ?: false
-
-        val screenType = if (isFav) ScreenType.Favorites else ScreenType.RemoteSearch(query)
-
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getPhoto(screenType).collectLatest { pagingData ->
+            viewModel.getPhoto().collectLatest { pagingData ->
                 detailsAdapter.submitData(pagingData)
             }
         }
     }
 
     override fun onDetailClick(photo: UISpaceData) {
-
         val sheet = DetailsBottomSheet().apply {
             arguments = Bundle().apply {
                 putParcelable("SPACE_DATA", photo)
             }
         }
-        sheet.show(childFragmentManager, "DetailsBottomSheet")
 
+        sheet.show(childFragmentManager, "DetailsBottomSheet")
     }
 
 
